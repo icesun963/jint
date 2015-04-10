@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Jint.Native;
-using Jint.Native.Array;
 using Jint.Native.Function;
 using Microsoft.Scripting.Ast;
 
@@ -34,14 +33,21 @@ namespace Jint.Runtime.Interop
 
             foreach (var method in methods)
             {
-                var parameters = new object[arguments.Length];
+                var methodParameters = method.GetParameters();
+                var parameters = new object[methodParameters.Length];
                 var argumentsMatch = true;
 
-                for (var i = 0; i < arguments.Length; i++)
+                for (var i = 0; i < methodParameters.Length; i++)
                 {
-                    var parameterType = method.GetParameters()[i].ParameterType;
+                    var parameterType = methodParameters[i].ParameterType;
 
-                    if (parameterType == typeof(JsValue))
+                    if (i >= arguments.Length)
+                    {
+                        var parameter = methodParameters[i];
+                        if (parameter.DefaultValue != null || parameterType.IsValueType)
+                            parameters[i] = parameter.DefaultValue ?? Activator.CreateInstance(parameterType);
+                    }
+                    else if (parameterType == typeof(JsValue))
                     {
                         parameters[i] = arguments[i];
                     }

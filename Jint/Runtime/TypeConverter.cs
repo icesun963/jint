@@ -363,8 +363,12 @@ namespace Jint.Runtime
 
         public static IEnumerable<MethodBase> FindBestMatch(Engine engine, MethodBase[] methods, JsValue[] arguments)
         {
-            methods = methods
-                .Where(m => m.GetParameters().Count() == arguments.Length)
+            methods = methods.Where(m =>
+                {
+                    var parameters = m.GetParameters();
+                    var min = parameters.Count() - parameters.Count(p => (p.Attributes & ParameterAttributes.HasDefault) == ParameterAttributes.HasDefault);
+                    return parameters.Count() >= arguments.Length && min <= arguments.Length;
+                })
                 .ToArray();
 
             if (methods.Length == 1 && !methods[0].GetParameters().Any())
