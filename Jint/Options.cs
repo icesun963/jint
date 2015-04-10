@@ -19,7 +19,7 @@ namespace Jint
         private int _maxRecursionDepth = -1; 
         private TimeSpan _timeoutInterval;
         private CultureInfo _culture = CultureInfo.CurrentCulture;
-        private TimeZoneInfo _localTimeZone = TimeZoneInfo.Local;
+        private TimeZoneInfo _localTimeZone;
         private List<Assembly> _lookupAssemblies = new List<Assembly>(); 
 
         /// <summary>
@@ -28,6 +28,7 @@ namespace Jint
         /// </summary>
         public Options DiscardGlobal(bool discard = true)
         {
+            SetTimeZoneInfo();
             _discardGlobal = discard;
             return this;
         }
@@ -37,6 +38,7 @@ namespace Jint
         /// </summary>
         public Options Strict(bool strict = true)
         {
+            SetTimeZoneInfo();
             _strict = strict;
             return this;
         }
@@ -50,6 +52,7 @@ namespace Jint
         /// </remarks>
         public Options AllowDebuggerStatement(bool allowDebuggerStatement = true)
         {
+            SetTimeZoneInfo();
             _allowDebuggerStatement = allowDebuggerStatement;
             return this;
         }
@@ -59,6 +62,7 @@ namespace Jint
         /// </summary>
         public Options AddObjectConverter(IObjectConverter objectConverter)
         {
+            SetTimeZoneInfo();
             _objectConverters.Add(objectConverter);
             return this;
         }
@@ -68,6 +72,7 @@ namespace Jint
         /// </summary>
         public Options AllowClr(params Assembly[] assemblies)
         {
+            SetTimeZoneInfo();
             _allowClr = true;
             _lookupAssemblies.AddRange(assemblies);
             _lookupAssemblies = _lookupAssemblies.Distinct().ToList();
@@ -76,12 +81,14 @@ namespace Jint
 
         public Options MaxStatements(int maxStatements = 0)
         {
+            SetTimeZoneInfo();
             _maxStatements = maxStatements;
             return this;
         }
         
         public Options TimeoutInterval(TimeSpan timeoutInterval)
         {
+            SetTimeZoneInfo();
             _timeoutInterval = timeoutInterval;
             return this;
         }
@@ -97,12 +104,14 @@ namespace Jint
         /// <returns>Options instance for fluent syntax</returns>
         public Options LimitRecursion(int maxRecursionDepth = 0)
         {
+            SetTimeZoneInfo();
             _maxRecursionDepth = maxRecursionDepth;
             return this;
         }
 
         public Options Culture(CultureInfo cultureInfo)
         {
+            SetTimeZoneInfo();
             _culture = cultureInfo;
             return this;
         }
@@ -111,6 +120,18 @@ namespace Jint
         {
             _localTimeZone = timeZoneInfo;
             return this;
+        }
+
+        private void SetTimeZoneInfo()
+        {
+            try
+            {
+                _localTimeZone = TimeZoneInfo.Local;
+            }
+            catch
+            {
+                _localTimeZone = TimeZoneInfo.Utc;
+            }
         }
 
         internal bool GetDiscardGlobal()

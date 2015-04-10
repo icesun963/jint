@@ -39,6 +39,12 @@ namespace Jint.Runtime
 
         public JsValue Error { get { return _errorObject; } }
 
+        public Parser.Location Location { get; set; }
+
+        public int LineNumber { get { return null == Location ? 0 : Location.Start.Line; } }
+
+        public int Column { get { return null == Location ? 0 : Location.Start.Column; } }
+
         public override string ToString()
         {
             return _errorObject.ToString();
