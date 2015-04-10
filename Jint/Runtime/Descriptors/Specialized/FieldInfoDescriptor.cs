@@ -16,7 +16,7 @@ namespace Jint.Runtime.Descriptors.Specialized
             _fieldInfo = fieldInfo;
             _item = item;
 
-            Writable = !fieldInfo.Attributes.HasFlag(FieldAttributes.InitOnly); // don't write to fields marked as readonly
+            Writable = !fieldInfo.IsInitOnly; // don't write to fields marked as readonly
         }
 
         public override JsValue? Value

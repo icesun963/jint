@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using Jint.Native;
 using Jint.Native.Array;
 using Jint.Native.Function;
+using Microsoft.Scripting.Ast;
 
 namespace Jint.Runtime.Interop
 {
